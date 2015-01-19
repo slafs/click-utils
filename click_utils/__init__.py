@@ -6,3 +6,4 @@ __version__ = '0.1.0.dev0'
 
 
 from .types import LogLevelChoice  # NOQA
+from .decorators import loglevel_option  # NOQA
