@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 __author__ = u'Sławek Ehlert'
 __email__ = 'slafs.e@gmail.com'
 __version__ = '0.1.0.dev0'
 
 
-from .types import LogLevelChoice  # NOQA
-from .decorators import loglevel_option  # NOQA
+from .logging import LogLevelChoice, loglevel_option  # NOQA
