@@ -6,12 +6,10 @@ readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 requirements = [
-    # TODO: put package requirements here
     'Click>=3.0,<4.0',
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
     'pytest',
 ]
 
