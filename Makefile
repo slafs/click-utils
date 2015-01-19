@@ -49,7 +49,7 @@ coverage:
 docs:
 	rm -f docs/click_utils.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ click_utils
+	sphinx-apidoc -H "Click Utils API" -o docs/ click_utils
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	open docs/_build/html/index.html
