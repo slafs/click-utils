@@ -7,7 +7,7 @@ import click
 
 class LogLevelChoice(click.Choice):
     '''
-    A subclass of ``click.Choice`` class for specyfing a logging level.
+    A subclass of ``click.Choice`` class for specifying a logging level.
 
     Example usage::
 
