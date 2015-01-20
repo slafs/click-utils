@@ -4,10 +4,18 @@ click_utils package
 Submodules
 ----------
 
-click_utils.types module
-------------------------
+click_utils.help module
+-----------------------
 
-.. automodule:: click_utils.types
+.. automodule:: click_utils.help
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+click_utils.logging module
+--------------------------
+
+.. automodule:: click_utils.logging
     :members:
     :undoc-members:
     :show-inheritance:
