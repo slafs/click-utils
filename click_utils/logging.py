@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import logging
+import logging.config
 
 import click
 
@@ -117,4 +118,87 @@ def loglevel_option(*param_decls, **attrs):
     def decorator(f):
         attrs.setdefault('type', LogLevelChoice())
         return click.option(*(param_decls or ('--loglevel',)), **attrs)(f)
+    return decorator
+
+
+def logconfig_callback_factory(defaults=None, disable_existing_loggers=False):
+    '''
+    a factory for creating parametrized callbacks to invoke ``logging.config.fileConfig``
+    '''
+    def inner(ctx, param, value):
+        if not value or ctx.resilient_parsing:
+            return
+        logging.config.fileConfig(value,
+                                  defaults=defaults,
+                                  disable_existing_loggers=disable_existing_loggers)
+        return value
+    return inner
+
+logconfig_callback = logconfig_callback_factory()
+
+logconfig_callback.__doc__ = '''
+a default callback for invoking::
+
+    logging.config.fileConfig(value, defaults=None, disable_existing_loggers=False)
+'''
+
+
+def logconfig_option(*param_decls, **attrs):
+    '''An option to easily configure logging via ``logging.config.fileConfig``.
+    This one allows to specify a file that will be passed as an argument
+    to ``logging.config.fileConfig`` function. Using this option like this::
+
+        @click.command()
+        @click_utils.logconfig_option()
+        def cli():
+            pass
+
+    is equivalent to:
+
+    .. code-block:: python
+
+        def mycallback(ctx, param, value):
+            if not value or ctx.resilient_parsing:
+                return
+            logging.config.fileConfig(value,
+                                      defaults=None,
+                                      disable_existing_loggers=False)
+
+        @click.command()
+        @click.option('--logconfig',
+                      expose_value=False,
+                      type=click.Path(exists=True, file_okay=True, dir_okay=False,
+                                      writable=False, readable=True, resolve_path=True)
+                      callback=mycallback
+                      )
+        def cli():
+            pass
+
+    This option accepts all the usual arguments and keyword arguments as ``click.option``.
+    Additionally it accepts two extra keyword arguments which are passed
+    to ``logging.config.fileConfig``:
+
+    * ``fileconfig_defaults`` is passed as ``defaults`` argument (default: ``None``)
+    * ``disable_existing_loggers`` is passed as ``disable_existing_loggers`` argument
+      (default: ``False``)
+
+    So you can add logconfig option like this::
+
+        @click.command()
+        @click_utils.logconfig_option(disable_existing_loggers=True)
+        def cli():
+            pass
+    '''
+    def decorator(f):
+        path_type = click.Path(exists=True, file_okay=True, dir_okay=False,
+                               writable=False, readable=True, resolve_path=True)
+        attrs.setdefault('type', path_type)
+        attrs.setdefault('expose_value', False)
+        disable_existing_loggers = attrs.pop('disable_existing_loggers', False)
+        fileconfig_defaults = attrs.pop('fileconfig_defaults', None)
+
+        callback_kwargs = dict(defaults=fileconfig_defaults, disable_existing_loggers=disable_existing_loggers)
+        attrs.setdefault('callback', logconfig_callback_factory(**callback_kwargs))
+
+        return click.option(*(param_decls or ('--logconfig',)), **attrs)(f)
     return decorator

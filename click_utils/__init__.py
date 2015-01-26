@@ -6,5 +6,6 @@ __email__ = 'slafs.e@gmail.com'
 __version__ = '0.1.0.dev0'
 
 
-from .logging import LogLevelChoice, loglevel_option  # NOQA
+from .logging import (LogLevelChoice, loglevel_option, logconfig_option,  # NOQA
+                      logconfig_callback)  # NOQA
 from .help import EnvHelpCommand  # NOQA

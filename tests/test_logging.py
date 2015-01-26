@@ -2,6 +2,7 @@
 
 import logging
 import click
+import textwrap
 
 import click_utils
 
@@ -120,3 +121,59 @@ def test_loglevel_uppercase(runner):
     result = runner.invoke(cli,  ['--loglevel=WARNING'], catch_exceptions=False)
 
     assert result.output == 'loglevel: 30\n'
+
+
+def test_logconfig_option(runner, tmpdir):
+    '''
+    test
+    '''
+    tmp_file = tmpdir.join('logging.conf')
+    conf_content = textwrap.dedent('''
+        [loggers]
+        keys=root,clickutils_logger
+
+        [handlers]
+        keys=hand01
+
+        [formatters]
+        keys=form01
+
+        [handler_hand01]
+        class=FileHandler
+        level=DEBUG
+        formatter=form01
+        args=('/dev/null',)
+
+        [formatter_form01]
+        format=F1 %(asctime)s %(levelname)s %(message)s
+        datefmt=
+        class=logging.Formatter
+
+        [logger_clickutils_logger]
+        level=CRITICAL
+        handlers=hand01
+        qualname=clickutils_test_logger
+
+        [logger_root]
+        handlers=hand01
+    ''')
+
+    tmp_file.write(conf_content)
+
+    @click.command()
+    @click_utils.logconfig_option()
+    def cli():
+        pass
+
+    # invoking without configfile shouldn't change anything
+    runner.invoke(cli, catch_exceptions=False)
+    test_logger = logging.getLogger('clickutils_test_logger')
+    assert len(test_logger.handlers) == 0
+
+    # invoking with ``logconfig`` should configure loggers
+    runner.invoke(cli,  ['--logconfig={0}'.format(tmp_file.strpath)], catch_exceptions=False)
+
+    test_logger = logging.getLogger('clickutils_test_logger')
+
+    assert len(test_logger.handlers) == 1
+    assert test_logger.level == logging.CRITICAL
