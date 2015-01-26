@@ -58,6 +58,11 @@ class LogLevelChoice(click.Choice):
         $ cli --loglevel=level101
         101
 
+    You can also pass level name in the uppercased form::
+
+        $ cli --loglevel=WARNING
+        30
+
     Finally, as a special case, user can provide any integer as a logging level::
 
         $ cli --loglevel=123

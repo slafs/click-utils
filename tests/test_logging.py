@@ -77,7 +77,9 @@ def test_loglevel_wrong_input(runner):
 
 
 def test_loglevel_decorator(runner):
-
+    '''
+    test that a shortcut decorator works
+    '''
     @click.command()
     @click_utils.loglevel_option()
     def cli(loglevel):
@@ -91,7 +93,9 @@ def test_loglevel_decorator(runner):
 
 
 def test_loglevel_decorator_custom(runner):
-
+    '''
+    test that a shortcut decorator works with a different param name
+    '''
     @click.command()
     @click_utils.loglevel_option('--logginglevel')
     def cli(logginglevel):
@@ -102,3 +106,17 @@ def test_loglevel_decorator_custom(runner):
 
     assert result.exit_code == 0
     assert result.output == '20\n'
+
+
+def test_loglevel_uppercase(runner):
+    '''
+    test invokation with uppercased level name
+    '''
+    @click.command()
+    @click.option('--loglevel', type=click_utils.LogLevelChoice())
+    def cli(loglevel):
+        click.echo('loglevel: {0}'.format(loglevel))
+
+    result = runner.invoke(cli,  ['--loglevel=WARNING'], catch_exceptions=False)
+
+    assert result.output == 'loglevel: 30\n'
