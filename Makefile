@@ -54,9 +54,15 @@ docs:
 	$(MAKE) -C docs html
 	open docs/_build/html/index.html
 
-release: clean
+release:
+	git checkout master
+	make clean
+	bumpversion --list release
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
+	git push origin master
+	bumpversion --no-tag patch
+	git push origin master
 
 dist: clean
 	python setup.py sdist
