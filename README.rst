@@ -20,4 +20,6 @@ a set of utilites for writing command line programs with Click
 Features
 --------
 
-* TODO
+* Couple of useful ``logging`` options and types
+* A custom command and option class for printing env vars names (WIP)
+* More to come...

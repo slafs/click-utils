@@ -3,9 +3,11 @@
 History
 -------
 
-0.1.0 (2015-01-19)
+0.1.0 (2015-01-26)
 ---------------------
 
 * First release on PyPI.
-* Add LogLevelChoice type
 * initial project structure
+* Add LogLevelChoice type
+* Add loglevel_option
+* Add logconfig_option
