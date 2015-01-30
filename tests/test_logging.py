@@ -125,7 +125,7 @@ def test_loglevel_uppercase(runner):
 
 def test_logconfig_option(runner, tmpdir):
     '''
-    test
+    test logging configuration via logconfig option
     '''
     tmp_file = tmpdir.join('logging.conf')
     conf_content = textwrap.dedent('''
@@ -180,6 +180,9 @@ def test_logconfig_option(runner, tmpdir):
 
 
 def test_logfile_option(runner, tmpdir):
+    '''
+    test a simple case with a logfile option
+    '''
     tmp_file = tmpdir.mkdir('logfiles').join('test.log')
     test_logger_name = 'click_utils_test_logfile_option_loger_name'
 
@@ -201,6 +204,9 @@ def test_logfile_option(runner, tmpdir):
 
 
 def test_logfile_option_with_loglevel_option(runner, tmpdir):
+    '''
+    test logfile with loglevel and the retrieval of level from context
+    '''
     tmp_file = tmpdir.mkdir('logfiles').join('test.log')
     test_logger_name = 'click_utils_test_logfile_option_with_loglevel_option_loger_name'
 
@@ -225,6 +231,9 @@ def test_logfile_option_with_loglevel_option(runner, tmpdir):
 
 
 def test_logfile_option_with_storing(runner, tmpdir):
+    '''
+    test that storing a logger on context (from logfile_option) works
+    '''
     tmp_file = tmpdir.mkdir('logfiles').join('test.log')
     tmp_file2 = tmpdir.mkdir('logfiles2').join('test2.log')
     test_logger_name = 'click_utils_test_logfile_option_with_storing_loger_name'
@@ -253,6 +262,9 @@ def test_logfile_option_with_storing(runner, tmpdir):
 
 
 def test_logfile_option_with_filters(runner, tmpdir):
+    '''
+    test that passing an iterable of filters to logfile_option works
+    '''
     tmp_file = tmpdir.mkdir('logfiles').join('test.log')
     test_logger_name = 'click_utils_test_logfile_option_with_filters_loger_name'
 
