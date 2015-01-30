@@ -7,5 +7,5 @@ __version__ = '0.1.1.dev0'
 
 
 from .logging import (LogLevelChoice, loglevel_option, logconfig_option,  # NOQA
-                      logconfig_callback)  # NOQA
+                      logconfig_callback, logger_option, logfile_option)  # NOQA
 from .help import EnvHelpCommand  # NOQA

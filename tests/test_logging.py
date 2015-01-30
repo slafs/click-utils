@@ -177,3 +177,97 @@ def test_logconfig_option(runner, tmpdir):
 
     assert len(test_logger.handlers) == 1
     assert test_logger.level == logging.CRITICAL
+
+
+def test_logfile_option(runner, tmpdir):
+    tmp_file = tmpdir.mkdir('logfiles').join('test.log')
+    test_logger_name = 'click_utils_test_logfile_option_loger_name'
+
+    @click.command()
+    @click_utils.logfile_option(logger_name=test_logger_name)
+    def cli():
+        pass
+
+    # invoking without logfile shouldn't change anything
+    runner.invoke(cli, catch_exceptions=False)
+    test_logger = logging.getLogger(test_logger_name)
+    assert len(test_logger.handlers) == 0
+
+    # invoking with ``logfile`` should configure a test logger
+    runner.invoke(cli,  ['--logfile={0}'.format(tmp_file.strpath)], catch_exceptions=False)
+    test_logger = logging.getLogger(test_logger_name)
+    assert len(test_logger.handlers) == 1
+    assert isinstance(test_logger.handlers[0], logging.handlers.RotatingFileHandler)
+
+
+def test_logfile_option_with_loglevel_option(runner, tmpdir):
+    tmp_file = tmpdir.mkdir('logfiles').join('test.log')
+    test_logger_name = 'click_utils_test_logfile_option_with_loglevel_option_loger_name'
+
+    @click.command()
+    @click_utils.loglevel_option(expose_value=False)
+    @click_utils.logfile_option(logger_name=test_logger_name)
+    def cli():
+        pass
+
+    # invoking without logfile shouldn't change anything
+    runner.invoke(cli, catch_exceptions=False)
+    test_logger = logging.getLogger(test_logger_name)
+    assert len(test_logger.handlers) == 0
+
+    # invoking with ``logfile`` and ``loglevel`` should configure a test logger with a certain level
+    runner.invoke(cli,  ['--loglevel=critical', '--logfile={0}'.format(tmp_file.strpath)], catch_exceptions=False)
+    test_logger = logging.getLogger(test_logger_name)
+    assert len(test_logger.handlers) == 1
+    assert isinstance(test_logger.handlers[0], logging.handlers.RotatingFileHandler)
+
+    assert test_logger.level == logging.CRITICAL
+
+
+def test_logfile_option_with_storing(runner, tmpdir):
+    tmp_file = tmpdir.mkdir('logfiles').join('test.log')
+    tmp_file2 = tmpdir.mkdir('logfiles2').join('test2.log')
+    test_logger_name = 'click_utils_test_logfile_option_with_storing_loger_name'
+
+    @click.command()
+    @click_utils.logfile_option(logger_name=test_logger_name,
+                                ctx_key='logger_on_context',
+                                default=tmp_file2.strpath)
+    @click.pass_context
+    def cli(ctx):
+        assert isinstance(ctx.logger_on_context.handlers[0], logging.handlers.RotatingFileHandler)
+
+    # invoking without logfile should configure a test logger with default file name and store it on context
+    runner.invoke(cli, catch_exceptions=False)
+    test_logger = logging.getLogger(test_logger_name)
+    assert len(test_logger.handlers) == 1
+    assert isinstance(test_logger.handlers[0], logging.handlers.RotatingFileHandler)
+    assert test_logger.handlers[0].baseFilename == tmp_file2.strpath
+
+    # invoking with ``logfile`` should configure a test logger with passed file name and store it on context
+    runner.invoke(cli,  ['--logfile={0}'.format(tmp_file.strpath)], catch_exceptions=False)
+    test_logger = logging.getLogger(test_logger_name)
+    assert len(test_logger.handlers) == 2
+    assert isinstance(test_logger.handlers[1], logging.handlers.RotatingFileHandler)
+    assert test_logger.handlers[1].baseFilename == tmp_file.strpath
+
+
+def test_logfile_option_with_filters(runner, tmpdir):
+    tmp_file = tmpdir.mkdir('logfiles').join('test.log')
+    test_logger_name = 'click_utils_test_logfile_option_with_filters_loger_name'
+
+    class CustomFilter(logging.Filter):
+        pass
+
+    filter = CustomFilter()
+
+    @click.command()
+    @click_utils.logfile_option(logger_name=test_logger_name, filters=(filter,))
+    def cli():
+        pass
+
+    runner.invoke(cli,  ['--logfile={0}'.format(tmp_file.strpath)], catch_exceptions=False)
+    test_logger = logging.getLogger(test_logger_name)
+    assert len(test_logger.filters) == 1
+
+    assert isinstance(test_logger.filters[0], CustomFilter)
