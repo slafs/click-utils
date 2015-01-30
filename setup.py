@@ -15,7 +15,7 @@ test_requirements = [
 
 setup(
     name='click-utils',
-    version='0.2.0',
+    version='0.2.1.dev0',
     description='a set of utilites for writing command line programs with Click',
     long_description=readme + '\n\n' + history,
     author=u'Sławek Ehlert',
