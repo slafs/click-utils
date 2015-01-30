@@ -4,6 +4,14 @@ click_utils package
 Submodules
 ----------
 
+click_utils.defaults module
+---------------------------
+
+.. automodule:: click_utils.defaults
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 click_utils.help module
 -----------------------
 
