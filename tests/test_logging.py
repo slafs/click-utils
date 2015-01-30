@@ -283,3 +283,23 @@ def test_logfile_option_with_filters(runner, tmpdir):
     assert len(test_logger.filters) == 1
 
     assert isinstance(test_logger.filters[0], CustomFilter)
+
+
+def test_default_int_loglevel(runner):
+    '''
+    test that a loglevel option works when a default value is int
+    '''
+    @click.command()
+    @click_utils.loglevel_option(default=logging.WARNING)
+    def cli(loglevel):
+        assert isinstance(loglevel, int)
+        click.echo(loglevel)
+
+    result = runner.invoke(cli, catch_exceptions=False)
+    assert result.exit_code == 0
+    assert result.output == '30\n'
+
+    result = runner.invoke(cli, ['--loglevel=error'], catch_exceptions=False)
+
+    assert result.exit_code == 0
+    assert result.output == '40\n'

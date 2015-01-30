@@ -98,7 +98,7 @@ class LogLevelChoice(click.Choice):
         super(LogLevelChoice, self).__init__(self.logging_level_keys)
 
     def convert(self, value, param, ctx):
-        lower_val = self._convert_key(value)
+        lower_val = self._convert_key(value) if not isinstance(value, int) else '{0}'.format(value)
         if lower_val.isdigit():
             return int(lower_val)
 
